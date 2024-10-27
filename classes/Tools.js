@@ -62,17 +62,30 @@ class Tools {
 
         // calculates current level from xp
         this.getLevel = function(xp, settings, returnRequirement) {
-            let lvl = 0
-            let previousLevel = 0
-            let xpRequired = 0                
-            while (xp >= xpRequired && lvl <= settings.maxLevel) {  // cubic formula my ass, here's a while loop. could probably binary search this?
-                lvl++
-                previousLevel = xpRequired
-                xpRequired = this.xpForLevel(lvl, settings)
+            let low = 0;
+            let high = settings.maxLevel;
+            let lvl = 0;
+            let xpRequired = 0;
+            let previousLevel = 0;
+        
+            while (low <= high) { // binary... plshelp
+                let mid = Math.floor((low + high) / 2);
+                previousLevel = xpRequired;
+                xpRequired = this.xpForLevel(mid, settings);
+        
+                if (xp < xpRequired) {
+                    high = mid - 1;
+                } else {
+                    lvl = mid;
+                    low = mid + 1;
+                }
             }
-            lvl--
-            return returnRequirement ? { level: lvl, xpRequired, previousLevel } : lvl
+        
+            return returnRequirement ? { level: lvl, xpRequired, previousLevel } : lvl;
         }
+
+
+
 
         // calculate xp to reach a level
         this.xpForLevel = function(lvl, settings) {
